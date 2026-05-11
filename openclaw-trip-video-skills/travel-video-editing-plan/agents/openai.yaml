@@ -1,0 +1,4 @@
+interface:
+  display_name: "Travel Video Editing Plan"
+  short_description: "Prepare deterministic editing and render specs."
+  default_prompt: "Use $travel-video-editing-plan to convert generated assets into a deterministic editing and render specification."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Travel Video Topic Research"
+  short_description: "Find travel short-video topics from search signals."
+  default_prompt: "Use -video-topic-research to find high-conversion travel short-video topics with evidence."

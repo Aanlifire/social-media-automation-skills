@@ -1,0 +1,74 @@
+# End-to-End Workflow
+
+This repository now contains both workflow skills and execution helpers.
+
+## Full Path
+
+```text
+topic research
+-> scriptwriting
+-> brand insert
+-> asset request planning
+-> media generation
+-> OSS storage
+-> fact check
+-> editing plan
+-> render worker
+-> OSS storage
+-> QA review
+-> publishing
+```
+
+## Runtime Requirements
+
+The skills are runnable workflow nodes, but external execution still needs real credentials or binaries:
+
+- DashScope API key for Wan image/video and Qwen TTS generation.
+- `ossutil` plus OSS bucket configuration for Alibaba Cloud OSS uploads.
+- FFmpeg or a render worker endpoint for final MP4 rendering.
+- Official platform API, draft queue, or manual queue endpoint for publishing.
+
+## Local Script Smoke Tests
+
+Create media jobs from an asset plan:
+
+```powershell
+python travel-video-media-generation/scripts/dispatch_media_jobs.py examples/local-ui-card-asset-plan.json output/media-jobs.json
+```
+
+Generate local deterministic SVG assets:
+
+```powershell
+python travel-video-media-generation/scripts/dashscope_media_worker.py output/media-jobs.json output/media-results.json --output-dir output/media
+```
+
+Build OSS upload manifest for generated media assets:
+
+```powershell
+python travel-video-oss-storage/scripts/build_upload_manifest.py output/media-results.json demo-video-001 output/upload-manifest.json
+```
+
+Upload generated media assets, or leave them in pending-upload state:
+
+```powershell
+python travel-video-oss-storage/scripts/ossutil_upload.py output/upload-manifest.json output/storage-result.json --dry-run
+```
+
+Build OSS upload manifest for final render output. Render outputs are routed to QA by default:
+
+```powershell
+python travel-video-oss-storage/scripts/build_upload_manifest.py output/render-result.json demo-video-001 output/final-upload-manifest.json
+python travel-video-oss-storage/scripts/ossutil_upload.py output/final-upload-manifest.json output/final-storage-result.json --dry-run
+```
+
+Create publish package:
+
+```powershell
+python travel-video-publisher/scripts/create_publish_package.py examples/approved-package.json output/publish-jobs.json
+```
+
+Submit publish package to a configured endpoint, or generate manual queue output:
+
+```powershell
+python travel-video-publisher/scripts/http_publish_worker.py output/publish-jobs.json output/publish-result.json --dry-run
+```

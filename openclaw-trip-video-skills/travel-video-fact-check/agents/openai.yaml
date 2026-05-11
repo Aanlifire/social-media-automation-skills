@@ -1,0 +1,4 @@
+interface:
+  display_name: "Travel Video Fact Check"
+  short_description: "Verify travel claims before video publishing."
+  default_prompt: "Use $travel-video-fact-check to verify travel claims in a video package before publishing."

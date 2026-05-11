@@ -1,0 +1,9 @@
+{
+  "qa_decision": "approve",
+  "platform_targets": ["manual_queue"],
+  "video_url": "https://example.com/video.mp4",
+  "cover_url": "https://example.com/cover.jpg",
+  "title": "Chengdu 3-day route: do not arrange it backwards",
+  "caption": "Input city, days, and budget. Let the AI arrange the route.",
+  "hashtags": ["travel", "chengdu", "ai-travel-planner"]
+}

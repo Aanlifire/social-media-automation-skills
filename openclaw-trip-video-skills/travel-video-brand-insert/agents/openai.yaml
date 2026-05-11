@@ -1,0 +1,4 @@
+interface:
+  display_name: "Travel Video Brand Insert"
+  short_description: "Add natural brand and CTA inserts to scripts."
+  default_prompt: "Use $travel-video-brand-insert to add natural brand and CTA inserts to a travel video script."

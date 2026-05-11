@@ -1,0 +1,4 @@
+interface:
+  display_name: "Travel Video Scriptwriter"
+  short_description: "Turn travel topics into short-video script JSON."
+  default_prompt: "Use -video-scriptwriter to convert a travel video topic into production-ready script JSON."

@@ -1,0 +1,7 @@
+﻿interface:
+  display_name: "Social Content Studio"
+  short_description: "Turn fragmented ideas into review-ready social content drafts."
+  default_prompt: "Use $social-content-studio to clarify my idea, structure it, and package it into review-ready social content drafts."
+
+policy:
+  allow_implicit_invocation: true

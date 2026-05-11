@@ -1,0 +1,4 @@
+interface:
+  display_name: "Travel Video QA Review"
+  short_description: "Review travel videos before publishing."
+  default_prompt: "Use $travel-video-qa-review to review a travel video package before publishing."

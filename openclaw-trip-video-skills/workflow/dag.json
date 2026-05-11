@@ -1,0 +1,36 @@
+{
+  "name": "openclaw-trip-video-production",
+  "nodes": [
+    "travel-video-topic-research",
+    "travel-video-scriptwriter",
+    "travel-video-brand-insert",
+    "travel-video-asset-generation",
+    "travel-video-media-generation",
+    "travel-video-oss-storage",
+    "travel-video-fact-check",
+    "travel-video-editing-plan",
+    "travel-video-render-worker",
+    "travel-video-oss-storage",
+    "travel-video-qa-review",
+    "travel-video-publisher"
+  ],
+  "edges": [
+    ["travel-video-topic-research", "travel-video-scriptwriter"],
+    ["travel-video-scriptwriter", "travel-video-brand-insert"],
+    ["travel-video-brand-insert", "travel-video-asset-generation"],
+    ["travel-video-asset-generation", "travel-video-media-generation"],
+    ["travel-video-media-generation", "travel-video-oss-storage"],
+    ["travel-video-oss-storage", "travel-video-fact-check"],
+    ["travel-video-fact-check", "travel-video-editing-plan"],
+    ["travel-video-editing-plan", "travel-video-render-worker"],
+    ["travel-video-render-worker", "travel-video-oss-storage"],
+    ["travel-video-oss-storage", "travel-video-qa-review"],
+    ["travel-video-qa-review", "travel-video-publisher"]
+  ],
+  "human_gates": [
+    {
+      "after": "travel-video-qa-review",
+      "condition": "decision == human_review_required"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Travel Video OSS Storage"
+  short_description: "Upload generated media to object storage."
+  default_prompt: "Use $travel-video-oss-storage to prepare OSS upload jobs and storage manifests for generated video assets."

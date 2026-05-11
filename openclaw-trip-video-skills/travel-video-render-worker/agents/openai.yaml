@@ -1,0 +1,4 @@
+interface:
+  display_name: "Travel Video Render Worker"
+  short_description: "Render final MP4 from a video manifest."
+  default_prompt: "Use $travel-video-render-worker to render a final MP4 from a deterministic travel video render manifest."

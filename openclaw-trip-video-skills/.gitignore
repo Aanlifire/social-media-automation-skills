@@ -1,0 +1,11 @@
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+.env
+.env.*
+!.env.example
+output/
+generated-media/
+rendered/
+__pycache__/

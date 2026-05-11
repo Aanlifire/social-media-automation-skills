@@ -1,0 +1,4 @@
+interface:
+  display_name: "Travel Video Publisher"
+  short_description: "Create publish jobs for approved videos."
+  default_prompt: "Use $travel-video-publisher to create platform publishing jobs for approved travel videos."

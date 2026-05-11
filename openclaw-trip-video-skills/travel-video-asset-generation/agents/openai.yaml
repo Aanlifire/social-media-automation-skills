@@ -1,0 +1,4 @@
+interface:
+  display_name: "Travel Video Asset Generation"
+  short_description: "Turn travel scripts into asset generation requests."
+  default_prompt: "Use -video-asset-generation to convert a travel video script package into asset-generation request JSON."

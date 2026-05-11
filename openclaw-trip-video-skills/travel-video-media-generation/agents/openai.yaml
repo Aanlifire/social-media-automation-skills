@@ -1,0 +1,4 @@
+interface:
+  display_name: "Travel Video Media Generation"
+  short_description: "Generate image video and TTS assets."
+  default_prompt: "Use $travel-video-media-generation to execute image, video, and TTS generation jobs from an asset plan."
