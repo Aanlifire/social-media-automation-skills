@@ -2,20 +2,114 @@
   "initial": "TOPIC_PENDING",
   "terminal": ["PUBLISHED", "FAILED", "REJECTED"],
   "states": {
-    "TOPIC_PENDING": {"next": "TOPIC_READY", "skill": "travel-video-topic-research"},
-    "TOPIC_READY": {"next": "SCRIPT_READY", "skill": "travel-video-scriptwriter"},
-    "SCRIPT_READY": {"next": "BRAND_INSERT_READY", "skill": "travel-video-brand-insert"},
-    "BRAND_INSERT_READY": {"next": "ASSET_PLAN_READY", "skill": "travel-video-asset-generation"},
-    "ASSET_PLAN_READY": {"next": "MEDIA_READY", "skill": "travel-video-media-generation", "retry": 3},
-    "MEDIA_READY": {"next": "MEDIA_STORED", "skill": "travel-video-oss-storage", "retry": 3},
-    "MEDIA_STORED": {"next": "FACT_CHECK_READY", "skill": "travel-video-fact-check"},
-    "FACT_CHECK_READY": {"next": "EDIT_PLAN_READY", "skill": "travel-video-editing-plan"},
-    "EDIT_PLAN_READY": {"next": "RENDER_READY", "skill": "travel-video-render-worker", "retry": 2},
-    "RENDER_READY": {"next": "FINAL_STORED", "skill": "travel-video-oss-storage", "retry": 3},
-    "FINAL_STORED": {"next": "QA_READY", "skill": "travel-video-qa-review"},
-    "QA_READY": {"next": "PUBLISH_PENDING", "on_human_review": "HUMAN_REVIEW_PENDING", "on_reject": "REJECTED"},
-    "HUMAN_REVIEW_PENDING": {"next": "PUBLISH_PENDING"},
-    "PUBLISH_PENDING": {"next": "PUBLISHED", "skill": "travel-video-publisher", "retry": 2}
+    "TOPIC_PENDING": {
+      "next": "TOPIC_READY",
+      "skill": "travel-video-topic-research"
+    },
+    "TOPIC_READY": {
+      "next": "HUMAN_TOPIC_REVIEW",
+      "gate": "human_topic_review"
+    },
+    "HUMAN_TOPIC_REVIEW": {
+      "type": "human_gate",
+      "review": "Select one topic candidate or request revisions.",
+      "on_approve": "SCRIPT_PENDING",
+      "on_revise": "TOPIC_PENDING",
+      "on_reject": "REJECTED"
+    },
+    "SCRIPT_PENDING": {
+      "next": "SCRIPT_READY",
+      "skill": "travel-video-scriptwriter"
+    },
+    "SCRIPT_READY": {
+      "next": "BRAND_INSERT_PENDING"
+    },
+    "BRAND_INSERT_PENDING": {
+      "next": "BRAND_INSERT_READY",
+      "skill": "travel-video-brand-insert"
+    },
+    "BRAND_INSERT_READY": {
+      "next": "HUMAN_SCRIPT_REVIEW",
+      "gate": "human_script_review"
+    },
+    "HUMAN_SCRIPT_REVIEW": {
+      "type": "human_gate",
+      "review": "Approve script package and brand insertion before asset planning.",
+      "on_approve": "ASSET_PLAN_PENDING",
+      "on_revise": "SCRIPT_PENDING",
+      "on_reject": "REJECTED"
+    },
+    "ASSET_PLAN_PENDING": {
+      "next": "ASSET_PLAN_READY",
+      "skill": "travel-video-asset-generation"
+    },
+    "ASSET_PLAN_READY": {
+      "next": "HUMAN_ASSET_PLAN_REVIEW",
+      "gate": "human_asset_plan_review"
+    },
+    "HUMAN_ASSET_PLAN_REVIEW": {
+      "type": "human_gate",
+      "review": "Approve cost, media type, and visual plan before provider calls.",
+      "on_approve": "MEDIA_PENDING",
+      "on_revise": "ASSET_PLAN_PENDING",
+      "on_reject": "REJECTED"
+    },
+    "MEDIA_PENDING": {
+      "next": "MEDIA_READY",
+      "skill": "travel-video-media-generation",
+      "retry": 3
+    },
+    "MEDIA_READY": {
+      "next": "MEDIA_STORED",
+      "skill": "travel-video-oss-storage",
+      "retry": 3,
+      "next_node_hint": "editing_plan"
+    },
+    "MEDIA_STORED": {
+      "next": "FACT_CHECK_READY",
+      "skill": "travel-video-fact-check"
+    },
+    "FACT_CHECK_READY": {
+      "next": "EDIT_PLAN_READY",
+      "skill": "travel-video-editing-plan"
+    },
+    "EDIT_PLAN_READY": {
+      "next": "RENDER_READY",
+      "skill": "travel-video-render-worker",
+      "retry": 2
+    },
+    "RENDER_READY": {
+      "next": "FINAL_STORED",
+      "skill": "travel-video-oss-storage",
+      "retry": 3,
+      "next_node_hint": "qa_review"
+    },
+    "FINAL_STORED": {
+      "next": "QA_READY",
+      "skill": "travel-video-qa-review"
+    },
+    "QA_READY": {
+      "next": "HUMAN_PUBLISH_REVIEW",
+      "on_repair_required": "ASSET_PLAN_PENDING",
+      "on_reject": "REJECTED"
+    },
+    "HUMAN_PUBLISH_REVIEW": {
+      "type": "human_gate",
+      "review": "Approve final video, cover, caption, and QA notes before publishing.",
+      "on_approve": "PUBLISH_PENDING",
+      "on_revise": "QA_READY",
+      "on_reject": "REJECTED"
+    },
+    "PUBLISH_PENDING": {
+      "next": "PUBLISHED",
+      "skill": "travel-video-publisher",
+      "retry": 2
+    }
+  },
+  "approval_events": {
+    "approve": "continue to the next production state",
+    "revise": "return to the configured repair state with human notes",
+    "reject": "stop the workflow as REJECTED"
   },
   "failure_policy": {
     "retryable_errors": ["timeout", "rate_limited", "network", "transient_provider_error"],

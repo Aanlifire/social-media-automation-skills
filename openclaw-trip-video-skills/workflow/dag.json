@@ -1,36 +1,180 @@
 {
   "name": "openclaw-trip-video-production",
+  "description": "Cloud-first AI travel short-video production workflow with human quality gates before expensive or irreversible steps.",
   "nodes": [
-    "travel-video-topic-research",
-    "travel-video-scriptwriter",
-    "travel-video-brand-insert",
-    "travel-video-asset-generation",
-    "travel-video-media-generation",
-    "travel-video-oss-storage",
-    "travel-video-fact-check",
-    "travel-video-editing-plan",
-    "travel-video-render-worker",
-    "travel-video-oss-storage",
-    "travel-video-qa-review",
-    "travel-video-publisher"
+    {
+      "id": "topic_research",
+      "type": "skill",
+      "skill": "travel-video-topic-research",
+      "output": "topic candidates with evidence and recommendation"
+    },
+    {
+      "id": "human_topic_review",
+      "type": "human_gate",
+      "review_input": "topic candidates",
+      "required_decision": "approve | revise | reject",
+      "on_approve": "scriptwriting",
+      "on_revise": "topic_research",
+      "on_reject": "rejected"
+    },
+    {
+      "id": "scriptwriting",
+      "type": "skill",
+      "skill": "travel-video-scriptwriter",
+      "output": "structured short-video script JSON"
+    },
+    {
+      "id": "brand_insert",
+      "type": "skill",
+      "skill": "travel-video-brand-insert",
+      "output": "script package with soft brand insertion"
+    },
+    {
+      "id": "human_script_review",
+      "type": "human_gate",
+      "review_input": "script package and brand insertion notes",
+      "required_decision": "approve | revise | reject",
+      "on_approve": "asset_generation",
+      "on_revise": "scriptwriting",
+      "on_reject": "rejected"
+    },
+    {
+      "id": "asset_generation",
+      "type": "skill",
+      "skill": "travel-video-asset-generation",
+      "output": "provider-agnostic asset request plan"
+    },
+    {
+      "id": "human_asset_plan_review",
+      "type": "human_gate",
+      "review_input": "asset plan, cost/risk notes, and media-generation readiness",
+      "required_decision": "approve | revise | reject",
+      "on_approve": "media_generation",
+      "on_revise": "asset_generation",
+      "on_reject": "rejected"
+    },
+    {
+      "id": "media_generation",
+      "type": "skill",
+      "skill": "travel-video-media-generation",
+      "retry": 3,
+      "output": "generated media results or provider task records"
+    },
+    {
+      "id": "media_storage",
+      "type": "skill",
+      "skill": "travel-video-oss-storage",
+      "retry": 3,
+      "next_node_hint": "editing_plan",
+      "output": "stored generated media assets"
+    },
+    {
+      "id": "fact_check",
+      "type": "skill",
+      "skill": "travel-video-fact-check",
+      "output": "fact-check report and claim repair notes"
+    },
+    {
+      "id": "editing_plan",
+      "type": "skill",
+      "skill": "travel-video-editing-plan",
+      "output": "deterministic render manifest"
+    },
+    {
+      "id": "render_worker",
+      "type": "skill",
+      "skill": "travel-video-render-worker",
+      "retry": 2,
+      "output": "final MP4, cover, and render logs"
+    },
+    {
+      "id": "final_storage",
+      "type": "skill",
+      "skill": "travel-video-oss-storage",
+      "retry": 3,
+      "next_node_hint": "qa_review",
+      "output": "stored final render assets"
+    },
+    {
+      "id": "qa_review",
+      "type": "skill",
+      "skill": "travel-video-qa-review",
+      "output": "QA decision, scoring, and repair handoff"
+    },
+    {
+      "id": "human_publish_review",
+      "type": "human_gate",
+      "review_input": "final video, cover, caption, QA report, and platform risk notes",
+      "required_decision": "approve | revise | reject",
+      "on_approve": "publisher",
+      "on_revise": "qa_review",
+      "on_reject": "rejected"
+    },
+    {
+      "id": "publisher",
+      "type": "skill",
+      "skill": "travel-video-publisher",
+      "retry": 2,
+      "output": "platform publish jobs or manual queue package"
+    }
   ],
   "edges": [
-    ["travel-video-topic-research", "travel-video-scriptwriter"],
-    ["travel-video-scriptwriter", "travel-video-brand-insert"],
-    ["travel-video-brand-insert", "travel-video-asset-generation"],
-    ["travel-video-asset-generation", "travel-video-media-generation"],
-    ["travel-video-media-generation", "travel-video-oss-storage"],
-    ["travel-video-oss-storage", "travel-video-fact-check"],
-    ["travel-video-fact-check", "travel-video-editing-plan"],
-    ["travel-video-editing-plan", "travel-video-render-worker"],
-    ["travel-video-render-worker", "travel-video-oss-storage"],
-    ["travel-video-oss-storage", "travel-video-qa-review"],
-    ["travel-video-qa-review", "travel-video-publisher"]
+    ["topic_research", "human_topic_review"],
+    ["human_topic_review", "scriptwriting"],
+    ["scriptwriting", "brand_insert"],
+    ["brand_insert", "human_script_review"],
+    ["human_script_review", "asset_generation"],
+    ["asset_generation", "human_asset_plan_review"],
+    ["human_asset_plan_review", "media_generation"],
+    ["media_generation", "media_storage"],
+    ["media_storage", "fact_check"],
+    ["fact_check", "editing_plan"],
+    ["editing_plan", "render_worker"],
+    ["render_worker", "final_storage"],
+    ["final_storage", "qa_review"],
+    ["qa_review", "human_publish_review"],
+    ["human_publish_review", "publisher"]
   ],
-  "human_gates": [
+  "quality_gates": [
     {
-      "after": "travel-video-qa-review",
-      "condition": "decision == human_review_required"
+      "id": "human_topic_review",
+      "purpose": "Choose one topic before scriptwriting.",
+      "approval_requires": [
+        "clear target platform",
+        "specific destination or travel pain point",
+        "evidence-backed hook",
+        "no obvious factual or policy risk"
+      ]
+    },
+    {
+      "id": "human_script_review",
+      "purpose": "Approve content direction before asset planning.",
+      "approval_requires": [
+        "hook is clear in the first 3 seconds",
+        "script does not feel like a hard ad",
+        "brand insertion is natural",
+        "uncertain factual claims are marked for checking"
+      ]
+    },
+    {
+      "id": "human_asset_plan_review",
+      "purpose": "Approve visual plan before paid media generation.",
+      "approval_requires": [
+        "asset requests are necessary and not wasteful",
+        "prompts are visually concrete",
+        "TTS and subtitle-safe areas are planned",
+        "costly video generation is only used when motion matters"
+      ]
+    },
+    {
+      "id": "human_publish_review",
+      "purpose": "Final approval before publishing or draft queue submission.",
+      "approval_requires": [
+        "QA decision is approve or human_review_required with accepted notes",
+        "final video and cover are available",
+        "caption, title, and hashtags are platform-appropriate",
+        "no unresolved factual, safety, or account-risk issues"
+      ]
     }
   ]
 }

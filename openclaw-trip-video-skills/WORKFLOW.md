@@ -6,9 +6,12 @@ This repository now contains both workflow skills and execution helpers.
 
 ```text
 topic research
+-> human topic review
 -> scriptwriting
 -> brand insert
+-> human script review
 -> asset request planning
+-> human asset plan review
 -> media generation
 -> OSS storage
 -> fact check
@@ -16,8 +19,25 @@ topic research
 -> render worker
 -> OSS storage
 -> QA review
+-> human publish review
 -> publishing
 ```
+
+## Cloud Production Mode
+
+The default OpenClaw workflow is intended to be plug-and-play as a supervised production line:
+
+1. OpenClaw generates topic candidates.
+2. The workflow pauses at `HUMAN_TOPIC_REVIEW`.
+3. After approval, OpenClaw writes the script and brand insertion.
+4. The workflow pauses at `HUMAN_SCRIPT_REVIEW`.
+5. After approval, OpenClaw creates the asset plan.
+6. The workflow pauses at `HUMAN_ASSET_PLAN_REVIEW` before paid media generation.
+7. After approval, OpenClaw generates assets, stores media, fact-checks, plans editing, renders, stores final output, and runs QA.
+8. The workflow pauses at `HUMAN_PUBLISH_REVIEW`.
+9. After approval, OpenClaw creates platform publish jobs or a manual queue package.
+
+Use `approve`, `revise`, and `reject` as the human-review events. See `workflow/review-gates.md` for approval criteria.
 
 ## Runtime Requirements
 

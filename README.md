@@ -6,6 +6,7 @@ This repository contains two complementary skill sets:
 
 - `social-content-studio`: turns fragmented creator notes, transcripts, chats, and half-finished drafts into review-ready social media content packages.
 - `openclaw-trip-video-skills`: provides an end-to-end travel short-video workflow for topic research, scriptwriting, brand insertion, asset planning, media generation, storage, fact-checking, editing plans, rendering, QA, and publishing handoff.
+- The video workflow is designed for cloud execution with human approval gates before topic selection, script lock, asset generation, and publishing.
 
 ## Repository Layout
 

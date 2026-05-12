@@ -22,9 +22,12 @@ This repository provides the workflow layer and local execution helpers. It does
 
 ```text
 travel-video-topic-research
+  -> human topic review
   -> travel-video-scriptwriter
   -> travel-video-brand-insert
+  -> human script review
   -> travel-video-asset-generation
+  -> human asset plan review
   -> travel-video-media-generation
   -> travel-video-oss-storage
   -> travel-video-fact-check
@@ -32,9 +35,11 @@ travel-video-topic-research
   -> travel-video-render-worker
   -> travel-video-oss-storage
   -> travel-video-qa-review
-  -> human review when required
+  -> human publish review
   -> travel-video-publisher
 ```
+
+The default workflow is cloud-first: OpenClaw can run the creative and production nodes, but it pauses at human quality gates before expensive provider calls or publishing. See `workflow/state-machine.json`, `workflow/dag.json`, and `workflow/review-gates.md`.
 
 ## What Works Out of the Box
 
@@ -80,6 +85,23 @@ Each skill has:
 SKILL.md
 agents/openai.yaml
 references/
+```
+
+For a full cloud production setup, import:
+
+```text
+workflow/state-machine.json
+workflow/dag.json
+workflow/review-gates.md
+```
+
+Then configure your task runner to pause on these states:
+
+```text
+HUMAN_TOPIC_REVIEW
+HUMAN_SCRIPT_REVIEW
+HUMAN_ASSET_PLAN_REVIEW
+HUMAN_PUBLISH_REVIEW
 ```
 
 ## Local Smoke Tests
